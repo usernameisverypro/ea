@@ -1,0 +1,81 @@
+--[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+
+-- Services
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Gun Names
+local GunNames = {
+    "AK", "AUGA1", "ARP", "Beretta", "Bullpup", "CZ75", "Deagle", "DoubleBarrel",
+    "Draco", "Famas", "Glock18", "M1Grand", "M4A1", "MAC10", "MAG7", "MP5", "MP7",
+    "MP9", "Negev", "Nova", "P220", "PPBizon", "Pistol", "RPG", "Revolver", "SA58",
+    "SawnOff", "Shotgun", "Uzi"
+}
+
+local SwitchValue = true
+
+-- Function to set the switch value of a gun
+local function SetSwitch(Gun)
+    if not Gun:IsA("Tool") or not table.find(GunNames, Gun.Name) then return end
+    local Switch = Gun:FindFirstChild("Switch")
+    if Switch then
+        Switch.Value = SwitchValue
+    end
+end
+
+-- Function to handle child added to backpack
+local function OnChildAdded(Child)
+    SetSwitch(Child)
+end
+
+-- Connect child added event
+LocalPlayer.Backpack.ChildAdded:Connect(OnChildAdded)
+
+-- Apply switch value to existing guns in backpack
+for _, Object in ipairs(LocalPlayer.Backpack:GetChildren()) do
+    SetSwitch(Object)
+end
+
+-- GUI Elements
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local SwitchButton = Instance.new("TextButton")
+
+-- ScreenGui properties
+ScreenGui.Name = "ExploitMenu"
+ScreenGui.Parent = PlayerGui
+
+-- Frame properties
+Frame.Size = UDim2.new(0, 200, 0, 100)
+Frame.Position = UDim2.new(0.5, -100, 0.5, -50)
+Frame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+Frame.Parent = ScreenGui
+
+-- Title properties
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.Position = UDim2.new(0, 0, 0, 0)
+Title.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+Title.Text = "Exploit Menu"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.Parent = Frame
+
+-- SwitchButton properties
+SwitchButton.Size = UDim2.new(1, -20, 0, 30)
+SwitchButton.Position = UDim2.new(0, 10, 0, 40)
+SwitchButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+SwitchButton.Text = "Toggle Switch"
+SwitchButton.TextColor3 = Color3.new(1, 1, 1)
+SwitchButton.Parent = Frame
+
+-- Toggle SwitchValue on button click
+SwitchButton.MouseButton1Click:Connect(function()
+    SwitchValue = not SwitchValue
+    for _, Object in ipairs(LocalPlayer.Backpack:GetChildren()) do
+        SetSwitch(Object)
+    end
+    print("SwitchValue set to:", SwitchValue)
+end)
